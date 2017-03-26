@@ -10,17 +10,17 @@ eval $(docker-machine env box-garden-master01)
 cat << EOS > docker-compose.yml
 version: '3'
 services:
-  web:
+  task:
     image: $(docker-machine ip box-garden-registry):5000/${box}:${tag}
-    ports:
-      - '80:80'
     deploy:
-      replicas: 2
-      update_config:  
-        parallelism: 1
-        delay: 10s
+      replicas: 1
       restart_policy:
         condition: on-failure
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: $(docker-machine ip box-garden-fluentd):24224
+        tag: docker.{{.FullID}}
 EOS
 
 docker stack deploy --compose-file docker-compose.yml $stack_name && rm -rf docker-compose.yml
