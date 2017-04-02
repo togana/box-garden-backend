@@ -3,7 +3,7 @@ set -eu
 
 box=$1
 tag=${2:-"latest"}
-stack_name=$(uuidgen)
+stack_name=$box
 
 eval $(docker-machine env box-garden-master01)
 
